@@ -30,6 +30,14 @@ const Ticket = require("./routes/Ticket");
 app.use("/api", Agent);
 app.use("/api", Ticket);
 
+app.get("/", (req, res) => {
+  res.send(" Server is Running! ");
+});
+
+app.get("/health", (req, res) => {
+  res.json({ message: "server is working fine" });
+});
+
 app.listen(8080, () => {
   console.log("Server started on port 8080");
 });
