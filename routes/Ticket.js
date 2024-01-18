@@ -6,6 +6,11 @@ let currentAgentIndex = 0;
 router.get("/get-tickets", async (req, res) => {
   try {
     const tickets = await Ticket.find();
+    for (let i = 0; i < tickets.length; i++) {
+      let ticketId = tickets[i].assignedTo;
+      const agent = await Agent.findById(ticketId);
+      tickets[i]._doc.agentName = agent?.name || "";
+    }
     res.json(tickets);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -40,8 +45,9 @@ router.post("/get-tickets", async (req, res) => {
 
     let tickets = await Ticket.find(query).sort(sortOption);
     for (let i = 0; i < tickets.length; i++) {
-      const agent = await Agent.find({ _id: tickets[i]._id });
-      tickets.agentName = agent.name;
+      let ticketId = tickets[i].assignedTo;
+      const agent = await Agent.findById(ticketId);
+      tickets[i]._doc.agentName = agent?.name || "";
     }
 
     res.json(tickets);
