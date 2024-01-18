@@ -38,7 +38,12 @@ router.post("/get-tickets", async (req, res) => {
       sortOption[filters.sortField] = 1;
     }
 
-    const tickets = await Ticket.find(query).sort(sortOption);
+    let tickets = await Ticket.find(query).sort(sortOption);
+    for (let i = 0; i < tickets.length; i++) {
+      const agent = await Agent.find({ _id: tickets[i]._id });
+      tickets.agentName = agent.name;
+    }
+
     res.json(tickets);
   } catch (err) {
     res.status(500).json({ error: err.message });
